@@ -1,0 +1,42 @@
+{
+  "name": "edu-telegram-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "bodasooqa",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "setup": "rimraf node_modules && pnpm install",
+    "dev": "dotenvx run --env-file=.env.development -- npx tsx watch src/index.ts",
+    "build": "tsc",
+    "protogen": "pnpm rebuild && pnpm cleanup:proto && pnpm /^protogen:.*/",
+    "protogen:script": "sh src/proto/protogen.sh",
+    "cleanup:proto": "rimraf ./src/proto/**/*.{js,ts}"
+  },
+  "dependencies": {
+    "@dotenvx/dotenvx": "^0.27.1",
+    "@grpc/grpc-js": "^1.10.4",
+    "@tonconnect/sdk": "^3.0.2",
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.65.1",
+    "qrcode": "^1.5.3",
+    "znv": "^0.4.0",
+    "zod": "^3.22.4",
+    "zod_utilz": "^0.8.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.3",
+    "@total-typescript/ts-reset": "^0.5.1",
+    "@types/google-protobuf": "^3.15.12",
+    "@types/node": "^20.12.2",
+    "@types/node-telegram-bot-api": "^0.64.6",
+    "@types/qrcode": "^1.5.5",
+    "grpc-tools": "^1.12.4",
+    "grpc_tools_node_protoc_ts": "^5.3.3",
+    "protoc-gen-js": "^3.21.2",
+    "rimraf": "^5.0.5",
+    "sh": "^0.0.3",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.3"
+  }
+}
