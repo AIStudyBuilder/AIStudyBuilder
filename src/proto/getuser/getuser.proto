@@ -1,0 +1,206 @@
+syntax = "proto3";
+
+package protobuff;
+
+option go_package = "chatbot-english/src/protobuf/generated/golang/protobuf";
+
+enum ContentType {
+  UNKNOWN = 0;
+  READ = 1;
+  VIDEO = 2;
+  INFO = 3;
+  IMAGE = 4;
+  AUDIO = 5;
+}
+
+enum TestType {
+  UNKNOWN_TEST_TYPE = 0;
+  TEXT = 1;
+  QUIZ = 2;
+  CARD = 3;
+  GUESS = 4;
+}
+
+enum NextType {
+  UNKNOWN_NEXT_TYPE = 0;
+  CONTENT = 1;
+  TEST = 2;
+  DIALOG = 3;
+}
+
+enum Language {
+  UNKNOWN_LANGUAGE = 0;
+  RUSSIAN = 1;
+  UKRAINE = 2;
+}
+
+enum Level {
+  UNKNOWN_LEVEL = 0;
+  A1 = 1;
+  A2 = 2;
+  B1 = 3;
+  B2 = 4;
+}
+
+message Content {
+  string name = 1;
+  ContentType type = 2;
+  string text = 3;
+  string textImgUrl = 4;
+  string video = 5;
+  string audio = 6;
+  string id = 7;
+}
+
+message Test {
+  string name = 1;
+  TestType type = 2;
+  string question = 3;
+  repeated string quizWords = 4;
+  string imgUrl = 5;
+  string info = 6;
+  string answer = 7;
+}
+
+message Dialog {
+  string botReply = 1;
+  string botReplyAudio = 2;
+  string instruction = 3;
+  bool canAudio = 4;
+  bool canText = 5;
+  string recommendation = 7;
+  string answerMsgId = 8;
+  string userMsgId = 9;
+}
+
+message User {
+  string name = 1;
+  string testResultComment = 2;
+  Level level = 3;
+  Language language = 4;
+  Content content = 5;
+  Test test = 6;
+  Dialog dialog = 7;
+  NextType nextType = 8;
+  map<string, ContentList> contentsMap = 9; // Теперь используем ContentList
+  repeated uint64 msgToDelete = 10;
+  repeated uint64 msgToUpdate = 11;
+}
+
+message ContentList {
+  repeated Content contents = 1;
+}
+
+message GetUserRequest {
+  string telegramId = 1;
+}
+
+message NextLessonRequest {
+  string telegramId = 1;
+}
+
+message NextSessionRequest {
+  string telegramId = 1;
+}
+
+message NextRequest {
+  string telegramId = 1;
+}
+
+message UserResponse {
+  User user = 1;
+}
+
+message SendDialogRequest {
+  string telegramId = 1; // Telegram ID пользователя
+  string userReply = 2;  // Ответ пользователя
+  string voiceFileUrl = 3; // URL голосового файла
+  string userMsgId = 4; // User window message id
+}
+
+message SendDialogMsgIdRequest {
+  string telegramId = 1; // Telegram ID пользователя
+  string answerMsgId = 2; // Bot window message id
+}
+
+message SendAnswerRequest {
+  string telegram_id = 1;
+  string user_reply = 2;
+}
+
+message UpdateButtonsRequest {
+  string telegram_id = 1;
+  repeated uint64 buttons = 2;
+}
+
+message UpdateUserRequest {
+  string telegram_id = 1;
+  string name = 2;
+  Language language = 3;
+  Level level = 4;
+  string refTelegramId = 5;
+}
+
+message GenerateReferalLinkRequest {
+  string telegram_id = 1;
+}
+
+message UpdateMessageIdForForceUpdateRequest {
+  string telegram_id = 1;
+  string message_id = 2;
+}
+
+message GenerateReferalLinkResponse {
+  string referal_link = 1;
+}
+
+service UserService {
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc SendDialog(SendDialogRequest) returns (UserResponse);
+  rpc SendDialogMsgId(SendDialogMsgIdRequest) returns (UserResponse);
+  rpc NextLesson(NextLessonRequest) returns (UserResponse);
+  rpc NextSession(NextSessionRequest) returns (UserResponse);
+  rpc Next(NextRequest) returns (UserResponse);
+  rpc SendAnswer(SendAnswerRequest) returns (UserResponse);
+  rpc UpdateMsgToDelete(UpdateButtonsRequest) returns (UserResponse);
+  rpc AddMsgToDelete(UpdateButtonsRequest) returns (UserResponse);
+  rpc UpdateMsgToUpdate(UpdateButtonsRequest) returns (UserResponse);
+  rpc AddMsgToUpdate(UpdateButtonsRequest) returns (UserResponse);
+  rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
+  rpc GenerateReferalLink(GenerateReferalLinkRequest) returns (GenerateReferalLinkResponse);
+  rpc UpdateMessageIdForForceUpdate (UpdateMessageIdForForceUpdateRequest) returns (GeneralResponse);
+
+}
+
+message NextContentRequest {
+  NextType type = 1;
+  string telegramId = 2;
+  string message_id = 3;
+}
+
+message DialogMessageRequest {
+  string msg = 1;
+  string telegramId = 2;
+  string msgId = 3;
+  string voiceUrl = 4;
+  string prepareReportMessage = 5;
+  string report = 6;
+}
+
+message SendPointsRequest {
+  string telegramId = 1;
+  int32 points = 2;
+}
+
+message GeneralResponse {
+  string result = 1;
+}
+
+service ChatService {
+  rpc NextContent (NextContentRequest) returns (GeneralResponse);
+  rpc DialogReply (DialogMessageRequest) returns (GeneralResponse);
+}
+
+service PointService {
+  rpc SendPoints (SendPointsRequest) returns (GeneralResponse);
+}
